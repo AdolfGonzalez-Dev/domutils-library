@@ -583,4 +583,4 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ---
 
-Made with ❤️ by [AdolfDigitalDev](https://github.com/AdolfDigitalDeveloper)
+Made with ❤️ by [AdolfDigitalDeveloper](https://github.com/AdolfDigitalDeveloper)
