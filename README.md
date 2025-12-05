@@ -558,7 +558,7 @@ Found a bug? Have a feature request?
 
 ## 📄 License
 
-MIT © 2025 [AdolfDigitalDev](LICENSE)
+MIT © 2025 [AdolfDigitalDeveloper](LICENSE)
 
 ---
 
