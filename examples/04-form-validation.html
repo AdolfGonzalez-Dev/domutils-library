@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation - DOMUtils Example</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    input.error {
+      border-color: #e74c3c;
+    }
+    .error-msg {
+      color: #e74c3c;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .error-msg.show {
+      display: block;
+    }
+    .success-msg {
+      color: #27ae60;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .success-msg.show {
+      display: block;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    button:not(:disabled):hover {
+      background: #5568d3;
+    }
+    .summary {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f0f2f5;
+      border-radius: 5px;
+      display: none;
+    }
+    .summary.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📋 Form Validation</h1>
+    
+    <form id="form">
+      <div class="form-group">
+        <label for="name">Nombre Completo</label>
+        <input 
+          id="name" 
+          type="text" 
+          name="name" 
+          placeholder="Juan Pérez"
+          required
+        >
+        <div class="error-msg">El nombre debe tener al menos 3 caracteres</div>
+        <div class="success-msg">✓ Válido</div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          name="email" 
+          placeholder="juan@example.com"
+          required
+        >
+        <div class="error-msg">Ingresa un email válido</div>
+        <div class="success-msg">✓ Válido</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input 
+          id="password" 
+          type="password" 
+          name="password" 
+          placeholder="••••••••"
+          required
+        >
+        <div class="error-msg">Mínimo 8 caracteres</div>
+        <div class="success-msg">✓ Válido</div>
+      </div>
+
+      <button type="submit" id="submitBtn" disabled>Registrarse</button>
+    </form>
+
+    <div class="summary" id="summary">
+      <h3>📊 Resumen</h3>
+      <p><strong>Nombre:</strong> <span id="summaryName"></span></p>
+      <p><strong>Email:</strong> <span id="summaryEmail"></span></p>
+      <p style="color: #27ae60; margin-top: 1rem;">✅ ¡Formulario enviado exitosamente!</p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const submitBtn = document.getElementById('submitBtn');
+    const summary = document.getElementById('summary');
+
+    const validators = {
+      name: (val) => val.length >= 3,
+      email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+      password: (val) => val.length >= 8
+    };
+
+    function validateField(input) {
+      const name = input.name;
+      const value = input.value;
+      const isValid = validators[name](value);
+      
+      const errorMsg = input.parentElement.querySelector('.error-msg');
+      const successMsg = input.parentElement.querySelector('.success-msg');
+
+      if (isValid && value) {
+        input.classList.remove('error');
+        errorMsg.classList.remove('show');
+        successMsg.classList.add('show');
+      } else if (value) {
+        input.classList.add('error');
+        errorMsg.classList.add('show');
+        successMsg.classList.remove('show');
+      } else {
+        input.classList.remove('error');
+        errorMsg.classList.remove('show');
+        successMsg.classList.remove('show');
+      }
+
+      updateSubmitButton();
+    }
+
+    function updateSubmitButton() {
+      const allValid = 
+        validators.name(nameInput.value) &&
+        validators.email(emailInput.value) &&
+        validators.password(passwordInput.value);
+      
+      submitBtn.disabled = !allValid;
+    }
+
+    nameInput.addEventListener('input', () => validateField(nameInput));
+    emailInput.addEventListener('input', () => validateField(emailInput));
+    passwordInput.addEventListener('input', () => validateField(passwordInput));
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      document.getElementById('summaryName').textContent = nameInput.value;
+      document.getElementById('summaryEmail').textContent = emailInput.value;
+      summary.classList.add('show');
+      
+      setTimeout(() => {
+        form.reset();
+        summary.classList.remove('show');
+        [nameInput, emailInput, passwordInput].forEach(input => {
+          input.classList.remove('error');
+          input.parentElement.querySelectorAll('.error-msg, .success-msg').forEach(msg => {
+            msg.classList.remove('show');
+          });
+        });
+        updateSubmitButton();
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
