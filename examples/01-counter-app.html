@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter App - DOMUtils Example</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    .display {
+      font-size: 3rem;
+      font-weight: bold;
+      margin: 2rem 0;
+      color: #667eea;
+    }
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #667eea;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    .reset {
+      background: #e74c3c;
+    }
+    .reset:hover {
+      background: #c0392b;
+    }
+    .status {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Counter App</h1>
+    <div class="display" id="count">0</div>
+    <div class="buttons">
+      <button id="decrement">➖ -1</button>
+      <button id="decrement10">⬅️ -10</button>
+      <button id="increment10">➡️ +10</button>
+      <button id="increment">➕ +1</button>
+      <button class="reset" id="reset">🔄 Reset</button>
+    </div>
+    <div class="status">
+      <p>Construido con ❤️ usando <strong>DOMUtils</strong></p>
+    </div>
+  </div>
+
+  <script type="module">
+    // Importar DOMUtils (asume que está instalado)
+    // En desarrollo real usarías: import { createSignal, createEffect } from 'domutils-library';
+    
+    // Para este ejemplo, simularemos las funciones (descomentar si usas npm install)
+    // import { createSignal, createEffect } from '../src/reactive/signals.js';
+    // import { q } from '../src/core/dom.js';
+
+    // Simulación de las funciones para demo
+    function createSignal(initial) {
+      let value = initial;
+      const subs = new Set();
+      const get = () => value;
+      const set = (newVal) => {
+        if (typeof newVal === 'function') {
+          value = newVal(value);
+        } else {
+          value = newVal;
+        }
+        subs.forEach(fn => fn());
+        return value;
+      };
+      const subscribe = (fn) => {
+        subs.add(fn);
+        return () => subs.delete(fn);
+      };
+      return [get, set, subscribe];
+    }
+
+    function createEffect(fn) {
+      fn();
+    }
+
+    function q(sel) {
+      return document.querySelector(sel);
+    }
+
+    // ============================================
+    // Aplicación
+    // ============================================
+
+    const [count, setCount] = createSignal(0);
+
+    // Efecto: Actualizar el DOM cuando count cambia
+    createEffect(() => {
+      q('#count').textContent = count();
+    });
+
+    // Event listeners
+    q('#increment').addEventListener('click', () => {
+      setCount(count() + 1);
+    });
+
+    q('#decrement').addEventListener('click', () => {
+      setCount(count() - 1);
+    });
+
+    q('#increment10').addEventListener('click', () => {
+      setCount(count() + 10);
+    });
+
+    q('#decrement10').addEventListener('click', () => {
+      setCount(count() - 10);
+    });
+
+    q('#reset').addEventListener('click', () => {
+      setCount(0);
+    });
+  </script>
+</body>
+</html>

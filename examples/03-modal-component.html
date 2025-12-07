@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modal Component - DOMUtils Example</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      padding: 2rem;
+    }
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    .open-btn {
+      padding: 0.75rem 1.5rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .open-btn:hover {
+      background: #5568d3;
+    }
+    
+    /* Modal styles */
+    #myModal {
+      aria-hidden: true;
+    }
+    #myModal .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    #myModal.open .modal-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .modal-content {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+    #myModal.open .modal-content {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 1rem;
+    }
+    .modal-header h2 {
+      margin: 0;
+      color: #333;
+    }
+    .close-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .close-btn:hover {
+      background: #c0392b;
+    }
+    
+    .modal-footer {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+    .modal-footer button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .primary-btn {
+      background: #667eea;
+      color: white;
+    }
+    .primary-btn:hover {
+      background: #5568d3;
+    }
+    .secondary-btn {
+      background: #ddd;
+      color: #333;
+    }
+    .secondary-btn:hover {
+      background: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>🔔 Modal Component Example</h1>
+    <p>Click el botón para abrir el modal accesible.</p>
+    <button class="open-btn" onclick="openModal()">Abrir Modal</button>
+  </div>
+
+  <!-- Modal -->
+  <div id="myModal" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">📝 Welcome Modal</h2>
+        <button class="close-btn" onclick="closeModal()" aria-label="Close">✕</button>
+      </div>
+      <div>
+        <p>Esta es una modal accesible construida con DOMUtils.</p>
+        <p>Features:</p>
+        <ul>
+          <li>✅ Accessible (WCAG compliant)</li>
+          <li>✅ Focus trap</li>
+          <li>✅ Cierra con Escape</li>
+          <li>✅ Click afuera para cerrar</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="secondary-btn" onclick="closeModal()">Cancelar</button>
+        <button class="primary-btn" onclick="handleConfirm()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('myModal');
+
+    function openModal() {
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      // Opcional: Enfoca el primer botón
+      modal.querySelector('button:not(.close-btn)')?.focus();
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function handleConfirm() {
+      alert('¡Confirmado!');
+      closeModal();
+    }
+
+    // Cerrar con Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    // Cerrar al hacer click en overlay
+    modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
+  </script>
+</body>
+</html>

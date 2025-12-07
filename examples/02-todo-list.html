@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo List - DOMUtils Example</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      color: #333;
+      text-align: center;
+    }
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background: #5568d3;
+    }
+    .todo-list {
+      list-style: none;
+    }
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    .todo-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    .todo-text {
+      flex: 1;
+      color: #333;
+    }
+    .todo-item input[type="checkbox"]:checked + .todo-text {
+      text-decoration: line-through;
+      color: #999;
+    }
+    .delete-btn {
+      padding: 0.5rem 1rem;
+      background: #e74c3c;
+      font-size: 0.9rem;
+    }
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+    .stats {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f0f2f5;
+      border-radius: 5px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✅ Todo List</h1>
+    
+    <div class="input-group">
+      <input 
+        id="input" 
+        type="text" 
+        placeholder="Agregar nueva tarea..."
+        autocomplete="off"
+      >
+      <button id="addBtn">Agregar</button>
+    </div>
+
+    <ul class="todo-list" id="list"></ul>
+
+    <div class="stats">
+      <p><strong id="total">0</strong> tareas - <strong id="completed">0</strong> completadas</p>
+    </div>
+  </div>
+
+  <script type="module">
+    const input = document.getElementById('input');
+    const addBtn = document.getElementById('addBtn');
+    const list = document.getElementById('list');
+    const totalSpan = document.getElementById('total');
+    const completedSpan = document.getElementById('completed');
+
+    let todos = [];
+    let nextId = 1;
+
+    function render() {
+      list.innerHTML = todos.map(todo => `
+        <li class="todo-item">
+          <input 
+            type="checkbox" 
+            ${todo.completed ? 'checked' : ''} 
+            onchange="toggleTodo(${todo.id})"
+          >
+          <span class="todo-text">${escapeHtml(todo.text)}</span>
+          <button class="delete-btn" onclick="deleteTodo(${todo.id})">Eliminar</button>
+        </li>
+      `).join('');
+
+      const completed = todos.filter(t => t.completed).length;
+      totalSpan.textContent = todos.length;
+      completedSpan.textContent = completed;
+    }
+
+    window.toggleTodo = (id) => {
+      const todo = todos.find(t => t.id === id);
+      if (todo) {
+        todo.completed = !todo.completed;
+        render();
+      }
+    };
+
+    window.deleteTodo = (id) => {
+      todos = todos.filter(t => t.id !== id);
+      render();
+    };
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function addTodo() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      todos.push({
+        id: nextId++,
+        text,
+        completed: false
+      });
+
+      input.value = '';
+      input.focus();
+      render();
+    }
+
+    addBtn.addEventListener('click', addTodo);
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTodo();
+    });
+
+    render();
+  </script>
+</body>
+</html>
